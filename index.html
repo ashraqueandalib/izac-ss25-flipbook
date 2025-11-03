@@ -1,245 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Magazine Flipbook</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: #ffffff;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            overflow: hidden;
-        }
-        
-        #magazine {
-            width: 80vw;
-            height: 70vh;
-            margin: 20px auto;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .page {
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .page img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-        
-        #navigation {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 20px;
-            padding: 10px;
-            background: #f8f8f8;
-            border-radius: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        #navigation button {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 0 15px;
-            color: #333;
-            transition: color 0.3s;
-        }
-        
-        #navigation button:hover {
-            color: #007bff;
-        }
-        
-        #page-info {
-            margin: 0 15px;
-            font-size: 16px;
-            color: #333;
-            min-width: 80px;
-            text-align: center;
-        }
-        
-        @media (max-width: 768px) {
-            #magazine {
-                width: 95vw;
-                height: 60vh;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flipbook Magazine</title>
+  <style>
+    :root {
+      --page-w: 820px;
+      --page-h: 1060px;
+      --nav-h: 64px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; background: #ffffff; color: #111; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .viewport { position: relative; height: calc(100vh - var(--nav-h)); display: flex; align-items: center; justify-content: center; padding: 20px 0; }
+    #book-wrapper { transform-origin: top center; transition: transform .2s ease; }
+    #flipbook { width: calc(var(--page-w) * 2); height: var(--page-h); }
+    #flipbook .page { width: var(--page-w); height: var(--page-h); background: #fafafa; position: relative; box-shadow: 0 20px 45px rgba(0,0,0,.12); }
+    #flipbook .page img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    #flipbook .page.odd::before, #flipbook .page.even::before {
+      content: ""; position: absolute; top: 0; bottom: 0; width: 26px; pointer-events: none; mix-blend-mode: multiply;
+    }
+    #flipbook .page.odd::before { right: 0; background: linear-gradient(90deg, rgba(0,0,0,.18), transparent); }
+    #flipbook .page.even::before { left: 0; background: linear-gradient(270deg, rgba(0,0,0,.16), transparent); }
+    .nav { height: var(--nav-h); display: flex; align-items: center; justify-content: center; gap: 16px; border-top: 1px solid rgba(0,0,0,.08); background: #fff; position: sticky; bottom: 0; }
+    .nav button { border: 0; background: rgba(0,0,0,.08); color: #111; padding: 8px 16px; border-radius: 999px; font-weight: 600; cursor: pointer; }
+    .nav button:disabled { opacity: .35; cursor: default; }
+    .nav .status { min-width: 90px; text-align: center; color: #444; }
+    @media (max-width: 900px) { :root { --page-w: 600px; --page-h: 820px; } }
+    @media (max-width: 640px) { :root { --page-w: 480px; --page-h: 680px; } }
+  </style>
 </head>
 <body>
-    <div id="magazine">
-        <div class="page"><img src="/images/Page_01.jpg" alt="Magazine Cover"></div>
-        <div class="page"><img src="/images/Page_02.jpg" alt="Page 2"></div>
-        <div class="page"><img src="/images/Page_03.jpg" alt="Page 3"></div>
-        <div class="page"><img src="/images/Page_04.jpg" alt="Page 4"></div>
-        <div class="page"><img src="/images/Page_05.jpg" alt="Page 5"></div>
-        <div class="page"><img src="/images/Page_06.jpg" alt="Page 6"></div>
-        <div class="page"><img src="/images/Page_07.jpg" alt="Page 7"></div>
-        <div class="page"><img src="/images/Page_08.jpg" alt="Page 8"></div>
-        <div class="page"><img src="/images/Page_09.jpg" alt="Page 9"></div>
-        <div class="page"><img src="/images/Page_10.jpg" alt="Page 10"></div>
-        <div class="page"><img src="/images/Page_11.jpg" alt="Page 11"></div>
-        <div class="page"><img src="/images/Page_12.jpg" alt="Page 12"></div>
-        <div class="page"><img src="/images/Page_13.jpg" alt="Page 13"></div>
-        <div class="page"><img src="/images/Page_14.jpg" alt="Page 14"></div>
-        <div class="page"><img src="/images/Page_15.jpg" alt="Page 15"></div>
-        <div class="page"><img src="/images/Page_16.jpg" alt="Page 16"></div>
-        <div class="page"><img src="/images/Page_17.jpg" alt="Page 17"></div>
-        <div class="page"><img src="/images/Page_18.jpg" alt="Page 18"></div>
-        <div class="page"><img src="/images/Page_19.jpg" alt="Page 19"></div>
-        <div class="page"><img src="/images/Page_20.jpg" alt="Page 20"></div>
-        <div class="page"><img src="/images/Page_21.jpg" alt="Page 21"></div>
+  <div class="viewport">
+    <div id="book-wrapper">
+      <div id="flipbook">
+        <div class="page cover odd"><img alt="Page 1" loading="lazy" decoding="async" src="images/Page_01.jpg" /></div>
+        <div class="page even"><img alt="Page 2" loading="lazy" decoding="async" src="images/Page_02.jpg" /></div>
+        <div class="page odd"><img alt="Page 3" loading="lazy" decoding="async" src="images/Page_03.jpg" /></div>
+        <div class="page even"><img alt="Page 4" loading="lazy" decoding="async" src="images/Page_04.jpg" /></div>
+        <div class="page odd"><img alt="Page 5" loading="lazy" decoding="async" src="images/Page_05.jpg" /></div>
+        <div class="page even"><img alt="Page 6" loading="lazy" decoding="async" src="images/Page_06.jpg" /></div>
+        <div class="page odd"><img alt="Page 7" loading="lazy" decoding="async" src="images/Page_07.jpg" /></div>
+        <div class="page even"><img alt="Page 8" loading="lazy" decoding="async" src="images/Page_08.jpg" /></div>
+        <div class="page odd"><img alt="Page 9" loading="lazy" decoding="async" src="images/Page_09.jpg" /></div>
+        <div class="page even"><img alt="Page 10" loading="lazy" decoding="async" src="images/Page_10.jpg" /></div>
+        <div class="page odd"><img alt="Page 11" loading="lazy" decoding="async" src="images/Page_11.jpg" /></div>
+        <div class="page even"><img alt="Page 12" loading="lazy" decoding="async" src="images/Page_12.jpg" /></div>
+        <div class="page odd"><img alt="Page 13" loading="lazy" decoding="async" src="images/Page_13.jpg" /></div>
+        <div class="page even"><img alt="Page 14" loading="lazy" decoding="async" src="images/Page_14.jpg" /></div>
+        <div class="page odd"><img alt="Page 15" loading="lazy" decoding="async" src="images/Page_15.jpg" /></div>
+        <div class="page even"><img alt="Page 16" loading="lazy" decoding="async" src="images/Page_16.jpg" /></div>
+        <div class="page odd"><img alt="Page 17" loading="lazy" decoding="async" src="images/Page_17.jpg" /></div>
+        <div class="page even"><img alt="Page 18" loading="lazy" decoding="async" src="images/Page_18.jpg" /></div>
+        <div class="page odd"><img alt="Page 19" loading="lazy" decoding="async" src="images/Page_19.jpg" /></div>
+        <div class="page even"><img alt="Page 20" loading="lazy" decoding="async" src="images/Page_20.jpg" /></div>
+        <div class="page odd"><img alt="Page 21" loading="lazy" decoding="async" src="images/Page_21.jpg" /></div>
+      </div>
     </div>
-    
-    <div id="navigation">
-        <button id="prev-btn">←</button>
-        <div id="page-info">1 / 21</div>
-        <button id="next-btn">→</button>
-    </div>
+  </div>
+  <div class="nav">
+    <button id="prev" aria-label="Previous page">◀</button>
+    <div class="status" id="status">1 / 21</div>
+    <button id="next" aria-label="Next page">▶</button>
+  </div>
 
-    <script>
-        // Self-contained Turn.js implementation
-        var Turnjs = (function() {
-            'use strict';
-            
-            function Turnjs(element, options) {
-                this.element = typeof element === 'string' ? document.querySelector(element) : element;
-                this.options = options || {};
-                this.currentPage = 1;
-                this.totalPages = this.element.children.length;
-                this.isAnimating = false;
-                this.init();
-            }
-            
-            Turnjs.prototype.init = function() {
-                this.setupPages();
-                this.setupEvents();
-                this.updateDisplay();
-            };
-            
-            Turnjs.prototype.setupPages = function() {
-                var pages = this.element.children;
-                for (var i = 0; i < pages.length; i++) {
-                    pages[i].style.width = '50%';
-                    pages[i].style.height = '100%';
-                    pages[i].style.float = 'left';
-                    pages[i].style.display = i === 0 ? 'block' : 'none';
-                }
-                
-                // Setup for two-page view after first page
-                if (pages.length > 1) {
-                    for (i = 1; i < pages.length - 1; i += 2) {
-                        pages[i].style.display = 'none';
-                        pages[i + 1].style.display = 'none';
-                    }
-                }
-            };
-            
-            Turnjs.prototype.setupEvents = function() {
-                var self = this;
-                
-                // Click events
-                this.element.addEventListener('click', function(e) {
-                    if (self.isAnimating) return;
-                    
-                    var rect = self.element.getBoundingClientRect();
-                    var x = e.clientX - rect.left;
-                    var width = rect.width;
-                    
-                    if (x > width / 2 && self.currentPage < self.totalPages) {
-                        self.next();
-                    } else if (x < width / 2 && self.currentPage > 1) {
-                        self.prev();
-                    }
-                });
-                
-                // Keyboard events
-                document.addEventListener('keydown', function(e) {
-                    if (self.isAnimating) return;
-                    
-                    if (e.keyCode === 37 && self.currentPage > 1) { // Left arrow
-                        self.prev();
-                    } else if (e.keyCode === 39 && self.currentPage < self.totalPages) { // Right arrow
-                        self.next();
-                    }
-                });
-                
-                // Touch events for mobile
-                var startX = 0;
-                this.element.addEventListener('touchstart', function(e) {
-                    startX = e.touches[0].clientX;
-                });
-                
-                this.element.addEventListener('touchend', function(e) {
-                    if (self.isAnimating) return;
-                    
-                    var endX = e.changedTouches[0].clientX;
-                    var diff = startX - endX;
-                    
-                    if (diff > 50 && self.currentPage < self.totalPages) { // Swipe left
-                        self.next();
-                    } else if (diff < -50 && self.currentPage > 1) { // Swipe right
-                        self.prev();
-                    }
-                });
-            };
-            
-            Turnjs.prototype.next = function() {
-                if (this.isAnimating || this.currentPage >= this.totalPages) return;
-                
-                this.isAnimating = true;
-                this.currentPage++;
-                this.updateDisplay();
-                
-                var self = this;
-                setTimeout(function() {
-                    self.isAnimating = false;
-                }, 500);
-            };
-            
-            Turnjs.prototype.prev = function() {
-                if (this.isAnimating || this.currentPage <= 1) return;
-                
-                this.isAnimating = true;
-                this.currentPage--;
-                this.updateDisplay();
-                
-                var self = this;
-                setTimeout(function() {
-                    self.isAnimating = false;
-                }, 500);
-            };
-            
-            Turnjs.prototype.updateDisplay = function() {
-                var pages = this.element.children;
-                
-                // Hide all pages
-                for (var i = 0; i < pages.length; i++) {
-                    pages[i].style.display = 'none';
-                }
-                
-                // Show current page(s)
-                if (this.currentPage === 1) {
-                    pages[0].style.display = 'block';
-                    pages[0].style.width = '100%';
-                } else {
-                    if (this.currentPage % 2 === 0) {
-                        pages[this.currentPage -
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+  <script>
+    (function() {
+      var total = 21;
+      var $flip = $('#flipbook');
+      var $wrap = $('#book-wrapper');
+      var $status = $('#status');
+      var $prev = $('#prev');
+      var $next = $('#next');
+
+      function init() {
+        if (!$flip.turn) { $status.text('Load error — refresh'); return; }
+        $flip.turn({
+          width: parseInt(getComputedStyle(document.documentElement).getPropertyValue('--page-w')) * 2,
+          height: parseInt(getComputedStyle(document.documentElement).getPropertyValue('--page-h')),
+          autoCenter: true,
+          elevation: 50,
+          gradients: true,
+          duration: 1000,
+          page: 1,
+          display: 'single',
+          when: {
+            turned: function(e, page) { update(page); adjustDisplay(page); }
+          }
+        });
+        update(1);
+        adjustDisplay(1);
+        resizeBook();
+      }
+
+      function adjustDisplay(page) {
+        if (page === 1 || page === total) {
+          $flip.turn('display', 'single');
+        } else {
+          $flip.turn('display', 'double');
+        }
+        setTimeout(resizeBook, 0);
+      }
+
+      function update(page) {
+        $status.text(page + ' / ' + total);
+        $prev.prop('disabled', page === 1);
+        $next.prop('disabled', page === total);
+      }
+
+      function resizeBook() {
+        var navH = document.querySelector('.nav').offsetHeight || 0;
+        var availH = window.innerHeight - navH - 40;
+        var availW = window.innerWidth - 20;
+        var singleW = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--page-w'));
+        var baseW = ($flip.turn('display') === 'single') ? singleW : singleW * 2;
+        var baseH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--page-h'));
+        var scale = Math.min(availW / baseW, availH / baseH, 1);
+        $wrap.css('transform', 'scale(' + (scale > 0 ? scale : 0.1) + ')');
+      }
+
+      $prev.on('click', function() { $flip.turn('previous'); });
+      $next.on('click', function() { $flip.turn('next'); });
+
+      $(document).on('keydown', function(e) {
+        if (e.key === 'ArrowLeft') $flip.turn('previous');
+        if (e.key === 'ArrowRight') $flip.turn('next');
+      });
+
+      $(window).on('resize', resizeBook);
+
+      $(init);
+    })();
+  </script>
+</body>
+</html>
