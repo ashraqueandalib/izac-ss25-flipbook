@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Flipbook — Dark (External Images)</title>
+<style>
+  :root {
+    --bg:#0b0b0c; --fg:#e7e7ea; --muted:#8d8d94;
+  }
+  html,body {margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+  .app {position:fixed;inset:0;display:grid;grid-template-rows:56px 1fr 56px;background:radial-gradient(1200px 800px at 50% 50%,#121214 0%,#0b0b0c 60%,#080809 100%);}
+  .topbar,.bottombar {display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));backdrop-filter:blur(6px);}
+  .title {font-weight:600;letter-spacing:.3px;opacity:.9;font-size:14px;}
+  .viewer {position:relative;width:100%;height:100%;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:pan-y;}
+  .page {position:absolute;inset:0;display:grid;place-items:center;transition:transform .5s ease,opacity .35s ease;}
+  .page img {width:100%;height:100%;object-fit:contain;background:transparent;}
+  .controls {display:flex;gap:8px;align-items:center;}
+  button.icon {height:36px;min-width:36px;padding:0 10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:var(--fg);border-radius:10px;cursor:pointer;transition:background .2s,border-color .2s,transform .05s;font-weight:600;}
+  button.icon:hover {background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14);}
+  button.icon:active {transform:translateY(1px);}
+  .pagecount {color:var(--muted);font-size:13px;min-width:92px;text-align:center;}
+  .hotspot {position:absolute;top:0;bottom:0;width:36%;z-index:5;}
+  .hotspot.left {left:0;} .hotspot.right {right:0;}
+  .hotspot:active {background:rgba(255,255,255,.02);}
+  @media (max-width:700px) {.topbar,.bottombar{padding:0 10px;}.pagecount{min-width:72px;}}
+</style>
+</head>
+<body>
+<div class="app" role="application" aria-label="Flipbook viewer">
+  <div class="topbar">
+    <div class="title">Flipbook — Dark</div>
+    <div class="controls">
+      <button class="icon" id="fs">Full Screen</button>
+    </div>
+  </div>
+  <div class="viewer" id="viewer">
+    <div class="hotspot left" id="tapPrev" aria-label="Previous page"></div>
+    <div class="hotspot right" id="tapNext" aria-label="Next page"></div>
+  </div>
+  <div class="bottombar">
+    <div class="controls">
+      <button class="icon" id="prev" aria-label="Previous">◀</button>
+      <div class="pagecount" id="count">1 / 1</div>
+      <button class="icon" id="next" aria-label="Next">▶</button>
+    </div>
+    <div style="font-size:12px;color:var(--muted);opacity:.8">Click edges · ←/→ keys · Swipe</div>
+  </div>
+</div>
+<script>
+  const IMAGES = ['images/Page_01.jpg', 'images/Page_02.jpg', 'images/Page_03.jpg', 'images/Page_04.jpg', 'images/Page_05.jpg', 'images/Page_06.jpg', 'images/Page_07.jpg', 'images/Page_08.jpg', 'images/Page_09.jpg', 'images/Page_10.jpg', 'images/Page_11.jpg', 'images/Page_12.jpg', 'images/Page_13.jpg', 'images/Page_14.jpg', 'images/Page_15.jpg', 'images/Page_16.jpg', 'images/Page_17.jpg', 'images/Page_18.jpg', 'images/Page_19.jpg', 'images/Page_20.jpg', 'images/Page_21.jpg'];
+  let index=0;
+  const viewer=document.getElementById('viewer');
+  const countEl=document.getElementById('count');
+  function setCount(){countEl.textContent=(index+1)+' / '+IMAGES.length;}
+  function render(){
+    viewer.querySelectorAll('.page').forEach(n=>n.remove());
+    const page=document.createElement('div');page.className='page shown';
+    const img=document.createElement('img');img.alt='Page '+(index+1);img.src=IMAGES[index];
+    page.appendChild(img);viewer.appendChild(page);setCount();
+    [index-1,index+1].forEach(i=>{if(i>=0 && i<IMAGES.length){const pre=new Image();pre.src=IMAGES[i];}});
+  }
+  function next(){if(index<IMAGES.length-1){index++;render();}}
+  function prev(){if(index>0){index--;render();}}
+  document.getElementById('next').addEventListener('click',next);
+  document.getElementById('prev').addEventListener('click',prev);
+  document.getElementById('tapNext').addEventListener('click',next);
+  document.getElementById('tapPrev').addEventListener('click',prev);
+  window.addEventListener('keydown',e=>{if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')prev();});
+  let startX=null;
+  viewer.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;},{passive:true});
+  viewer.addEventListener('touchend',e=>{if(startX===null)return;const dx=e.changedTouches[0].clientX-startX;if(Math.abs(dx)>40){dx<0?next():prev();}startX=null;},{passive:true});
+  const fsBtn=document.getElementById('fs');
+  fsBtn.addEventListener('click',()=>{const el=document.documentElement;if(!document.fullscreenElement){(el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen).call(el);fsBtn.textContent='Exit Full Screen';}else{(document.exitFullscreen||document.webkitExitFullscreen||document.msExitFullscreen).call(document);fsBtn.textContent='Full Screen';}});
+  render();
+</script>
+</body>
+</html>
